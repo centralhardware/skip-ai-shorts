@@ -1,5 +1,5 @@
-// Content scripts live in an isolated world, so load inject.js into the page
-// as early as possible and relay its "blocked" counts into the stats.
+// inject.js is also registered with world: MAIN; this <script> tag is the
+// fallback for browsers without it (inject.js guards against running twice) and relay its "blocked" counts into the stats.
 // Shares scope with content.js, which defines api and record().
 
 const s = document.createElement('script');
