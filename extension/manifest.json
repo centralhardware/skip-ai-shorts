@@ -1,9 +1,20 @@
 {
   "manifest_version": 3,
   "name": "Skip AI Shorts",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Skips YouTube Shorts that carry YouTube's altered/synthetic (AI) content label.",
   "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://m.youtube.com/*"
+      ],
+      "js": [
+        "inject.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
     {
       "matches": [
         "https://www.youtube.com/*",
