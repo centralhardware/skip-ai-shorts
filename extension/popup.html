@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    :root { color-scheme: light dark; }
+    body { font: 13px -apple-system, system-ui, sans-serif; margin: 12px 14px; min-width: 180px; }
+    h1 { font-size: 13px; margin: 0 0 8px; }
+    table { width: 100%; border-collapse: collapse; }
+    td { padding: 3px 0; }
+    td:last-child { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+    button { margin-top: 10px; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <h1>Skipped AI shorts</h1>
+  <table>
+    <tr><td>Today</td><td id="today">0</td></tr>
+    <tr><td>Last 7 days</td><td id="week">0</td></tr>
+    <tr><td>All time</td><td id="total">0</td></tr>
+  </table>
+  <button id="reset">Reset</button>
+  <script src="popup.js"></script>
+</body>
+</html>

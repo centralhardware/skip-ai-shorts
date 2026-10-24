@@ -18,6 +18,18 @@ function isAi(el) {
   return MARKERS.some((re) => re.test(el.innerText || ''));
 }
 
+const api = globalThis.browser ?? globalThis.chrome;
+
+// Stats live in extension storage: a running total plus per-day counts
+// (keyed by local YYYY-MM-DD) so the popup can show today / 7 days / all time.
+async function record() {
+  const day = new Date().toLocaleDateString('en-CA');
+  const { stats = { total: 0, days: {} } } = await api.storage.local.get('stats');
+  stats.total += 1;
+  stats.days[day] = (stats.days[day] || 0) + 1;
+  await api.storage.local.set({ stats });
+}
+
 function next() {
   const btn = document.querySelector('#navigation-button-down button');
   if (btn) return btn.click();
@@ -37,6 +49,7 @@ function check() {
       active.dataset.aiSkipped = location.pathname;
       console.debug('[skip-ai-shorts] skipping', location.pathname);
       next();
+      record().catch((e) => console.debug('[skip-ai-shorts] stats', e));
     }
   });
 }
