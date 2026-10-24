@@ -10,18 +10,28 @@ const MARKERS = [
 ];
 
 const ACTIVE = [
-  'ytd-reel-video-renderer[is-active]', // desktop
+  'ytd-reel-video-renderer[is-active]', // desktop, one renderer per short
   'ytm-reel-player-overlay-renderer',   // mobile web (m.youtube.com)
 ].join(',');
 
-// Newer layouts show only a compact "ⓘ AI" chip under the title, so also
-// accept any leaf element whose whole text is just that word.
-const CHIP = /^(AI|ИИ)$/;
+// Newer desktop layout keeps a single renderer for every short and drops
+// is-active, so fall back to it when it's the only one.
+function activeShort() {
+  const el = document.querySelector(ACTIVE);
+  if (el) return el;
+  const all = document.querySelectorAll('ytd-reel-video-renderer');
+  return all.length === 1 ? all[0] : null;
+}
+
+// Newer layouts show only a compact "ⓘ AI" chip (a button in the metapanel
+// carousel), so also accept any text node that is just that word.
+const CHIP = /^\s*(AI|ИИ)\s*$/;
 
 function isAi(el) {
   if (MARKERS.some((re) => re.test(el.innerText || ''))) return true;
-  for (const node of el.querySelectorAll('span, div, a, yt-formatted-string')) {
-    if (!node.children.length && CHIP.test(node.textContent.trim())) return true;
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  while (walker.nextNode()) {
+    if (CHIP.test(walker.currentNode.nodeValue)) return true;
   }
   return false;
 }
@@ -51,7 +61,7 @@ function check() {
   pending = true;
   requestAnimationFrame(() => {
     pending = false;
-    const active = document.querySelector(ACTIVE);
+    const active = activeShort();
     if (!active || active.dataset.aiSkipped === location.pathname) return;
     if (isAi(active)) {
       active.dataset.aiSkipped = location.pathname;
