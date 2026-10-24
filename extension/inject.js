@@ -21,10 +21,25 @@
     return JSON.stringify(data);
   }
 
-  const orig = window.fetch;
+  // Something on the page (YouTube or another extension) replaces
+  // window.fetch after us, so later requests skipped our wrapper. Keep ours
+  // outermost: whatever gets assigned becomes the function we wrap.
+  // If the replacement itself wraps ours, it calls back into us; the busy
+  // flag sends that nested call straight to the original fetch.
+  const original = window.fetch;
+  let inner = original;
+  let busy = false;
 
-  window.fetch = async function (...args) {
-    const res = await orig.apply(this, args);
+  async function wrapped(...args) {
+    let pending;
+    if (busy) return original.apply(this, args);
+    busy = true;
+    try {
+      pending = inner.apply(this, args);
+    } finally {
+      busy = false;
+    }
+    const res = await pending;
     if (!isSequence(res)) return res;
     window.__skipAiShorts.seen += 1;
     try {
@@ -42,5 +57,13 @@
       console.debug('[skip-ai-shorts] filter', e);
       return res;
     }
-  };
+  }
+
+  Object.defineProperty(window, 'fetch', {
+    configurable: true,
+    get: () => wrapped,
+    set: (fn) => {
+      if (fn !== wrapped) inner = fn;
+    },
+  });
 })();
