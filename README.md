@@ -7,7 +7,24 @@ YouTube exposes that label only inside the Shorts player, not in the feed,
 so the extension skips such shorts while you scroll instead of hiding them
 from the home page.
 
-## Install in Safari (macOS), step by step
+## Quick install: prebuilt app (no Xcode)
+
+GitHub Actions builds the macOS app on every push; tagged versions are
+attached to [Releases](https://github.com/centralhardware/skip-ai-shorts/releases).
+
+```sh
+cd ~/Downloads
+curl -LO https://github.com/centralhardware/skip-ai-shorts/releases/latest/download/Skip-AI-Shorts-macOS.zip
+ditto -x -k Skip-AI-Shorts-macOS.zip /Applications
+xattr -dr com.apple.quarantine /Applications/SkipAIShorts.app   # app is ad-hoc signed, not notarized
+open /Applications/SkipAIShorts.app
+```
+
+Then do steps 5–7 below (allow unsigned extensions, enable it, test).
+
+To cut a new release: `git tag v1.0.1 && git push --tags`.
+
+## Build it yourself (macOS), step by step
 
 **1. Install Xcode** (from the App Store, or via the command line):
 
