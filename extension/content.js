@@ -40,11 +40,11 @@ const api = globalThis.browser ?? globalThis.chrome;
 
 // Stats live in extension storage: a running total plus per-day counts
 // (keyed by local YYYY-MM-DD) so the popup can show today / 7 days / all time.
-async function record() {
+async function record(n = 1) {
   const day = new Date().toLocaleDateString('en-CA');
   const { stats = { total: 0, days: {} } } = await api.storage.local.get('stats');
-  stats.total += 1;
-  stats.days[day] = (stats.days[day] || 0) + 1;
+  stats.total += n;
+  stats.days[day] = (stats.days[day] || 0) + n;
   await api.storage.local.set({ stats });
 }
 
