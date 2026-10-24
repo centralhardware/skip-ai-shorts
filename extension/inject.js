@@ -1,12 +1,11 @@
 // Runs in the page itself (not the isolated content-script world).
 // reel_watch_sequence returns the upcoming shorts, and each entry already
 // carries the AI disclosure, so AI shorts are dropped before the player sees
-// them. Something else (YouTube or another extension) also wraps fetch, so
-// instead of wrapping fetch we patch how its responses are read: that catches
-// the request no matter which fetch reference made it.
+// them. The response is replaced in a fetch wrapper, so it doesn't matter
+// how YouTube reads the body (text, json, arrayBuffer or a stream).
 (() => {
   if (window.__skipAiShorts) return;
-  window.__skipAiShorts = { blocked: 0 };
+  window.__skipAiShorts = { seen: 0, blocked: 0 };
 
   const AI = /altered or fully generated|"title":"AI"|"title":"ИИ"/;
   const isSequence = (res) => res.url.includes('/youtubei/v1/reel/reel_watch_sequence');
@@ -22,21 +21,26 @@
     return JSON.stringify(data);
   }
 
-  const { text, json } = Response.prototype;
+  const orig = window.fetch;
 
-  Response.prototype.text = async function () {
-    const body = await text.call(this);
-    if (!isSequence(this)) return body;
+  window.fetch = async function (...args) {
+    const res = await orig.apply(this, args);
+    if (!isSequence(res)) return res;
+    window.__skipAiShorts.seen += 1;
     try {
-      return filter(body);
+      const body = await res.clone().text();
+      const filtered = filter(body);
+      if (filtered === body) return res;
+      const out = new Response(filtered, {
+        status: res.status,
+        statusText: res.statusText,
+        headers: res.headers,
+      });
+      Object.defineProperty(out, 'url', { value: res.url });
+      return out;
     } catch (e) {
       console.debug('[skip-ai-shorts] filter', e);
-      return body;
+      return res;
     }
-  };
-
-  Response.prototype.json = async function () {
-    if (!isSequence(this)) return json.call(this);
-    return JSON.parse(await this.text());
   };
 })();
