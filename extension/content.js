@@ -14,8 +14,16 @@ const ACTIVE = [
   'ytm-reel-player-overlay-renderer',   // mobile web (m.youtube.com)
 ].join(',');
 
+// Newer layouts show only a compact "ⓘ AI" chip under the title, so also
+// accept any leaf element whose whole text is just that word.
+const CHIP = /^(AI|ИИ)$/;
+
 function isAi(el) {
-  return MARKERS.some((re) => re.test(el.innerText || ''));
+  if (MARKERS.some((re) => re.test(el.innerText || ''))) return true;
+  for (const node of el.querySelectorAll('span, div, a, yt-formatted-string')) {
+    if (!node.children.length && CHIP.test(node.textContent.trim())) return true;
+  }
+  return false;
 }
 
 const api = globalThis.browser ?? globalThis.chrome;
