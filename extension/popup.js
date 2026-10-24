@@ -20,5 +20,7 @@ document.getElementById('reset').addEventListener('click', async () => {
   render();
 });
 
+document.getElementById('version').textContent = `v${api.runtime.getManifest().version}`;
+
 api.storage.onChanged.addListener(render);
 render();
