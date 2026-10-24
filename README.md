@@ -34,14 +34,14 @@ cd skip-ai-shorts
 **4. Build and install the app** (from the terminal, no need to open Xcode):
 
 ```sh
-cd "build/Skip AI Shorts"
-xcodebuild -scheme "Skip AI Shorts (macOS)" -configuration Release \
+cd build/SkipAIShorts
+xcodebuild -scheme "SkipAIShorts (macOS)" -configuration Release \
   -derivedDataPath ../dd CODE_SIGN_IDENTITY="-" build
-open "../dd/Build/Products/Release/Skip AI Shorts.app"
+open ../dd/Build/Products/Release/SkipAIShorts.app
 ```
 
 Or open the project in Xcode (`open *.xcodeproj`), pick the
-*Skip AI Shorts (macOS)* scheme and press **Run** (⌘R).
+*SkipAIShorts (macOS)* scheme and press **Run** (⌘R).
 
 **5. Let Safari load an unsigned extension:**
 
@@ -69,7 +69,7 @@ git pull && ./convert.sh   # then repeat step 4
 ### iPhone / iPad
 
 Open the project in Xcode, set a Team under Signing & Capabilities, pick the
-*Skip AI Shorts (iOS)* scheme with your device and press Run. Then enable it
+*SkipAIShorts (iOS)* scheme with your device and press Run. Then enable it
 in Settings → Apps → Safari → Extensions → Skip AI Shorts → allow youtube.com.
 
 ## Chrome / Firefox

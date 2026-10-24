@@ -21,19 +21,19 @@ jobs:
 
       - name: Build app (ad-hoc signed)
         run: |
-          cd build/"Skip AI Shorts"
+          cd build/SkipAIShorts
           xcodebuild -list
           SCHEME=$(xcodebuild -list -json | python3 -c 'import json,sys; print(json.load(sys.stdin)["project"]["schemes"][0])')
           echo "Scheme: $SCHEME"
           xcodebuild -scheme "$SCHEME" -configuration Release \
             -derivedDataPath "$GITHUB_WORKSPACE/dd" \
-            CODE_SIGN_IDENTITY="-" CODE_SIGNING_REQUIRED=NO DEVELOPMENT_TEAM="" \
+            CODE_SIGN_IDENTITY="-" CODE_SIGNING_REQUIRED=NO DEVELOPMENT_TEAM="" MACOSX_DEPLOYMENT_TARGET=13.0 \
             build
 
       - name: Package
         run: |
           cd dd/Build/Products/Release
-          ditto -c -k --keepParent "Skip AI Shorts.app" "$GITHUB_WORKSPACE/Skip-AI-Shorts-macOS.zip"
+          ditto -c -k --keepParent SkipAIShorts.app "$GITHUB_WORKSPACE/Skip-AI-Shorts-macOS.zip"
 
       - uses: actions/upload-artifact@v4
         with:
