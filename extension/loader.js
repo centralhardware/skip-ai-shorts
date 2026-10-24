@@ -1,5 +1,6 @@
 // inject.js is also registered with world: MAIN; this <script> tag is the
-// fallback for browsers without it (inject.js guards against running twice) and relay its "blocked" counts into the stats.
+// fallback for browsers without it (inject.js guards against running twice).
+// Also relays inject.js's "blocked" counts into the stats.
 // Shares scope with content.js, which defines api and record().
 
 const s = document.createElement('script');
