@@ -1,6 +1,6 @@
 // Content scripts live in an isolated world, so load inject.js into the page
 // as early as possible and relay its "blocked" counts into the stats.
-const api = globalThis.browser ?? globalThis.chrome;
+// Shares scope with content.js, which defines api and record().
 
 const s = document.createElement('script');
 s.src = api.runtime.getURL('inject.js');
