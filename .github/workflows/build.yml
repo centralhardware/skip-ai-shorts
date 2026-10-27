@@ -35,7 +35,7 @@ jobs:
           cd dd/Build/Products/Release
           ditto -c -k --keepParent SkipAIShorts.app "$GITHUB_WORKSPACE/Skip-AI-Shorts-macOS.zip"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: Skip-AI-Shorts-macOS
           path: Skip-AI-Shorts-macOS.zip
